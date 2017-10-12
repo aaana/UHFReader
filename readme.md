@@ -12,4 +12,4 @@
 
 # UI
 
-<img src='https://raw.githubusercontent.com/aaana/UHFReader/master/doc/ui.png'></img>
+<img src='https://raw.githubusercontent.com/aaana/UHFReader/master/ui.png'></img>
