@@ -9,3 +9,7 @@
 
 
 ## 硬件控制模块
+
+# UI
+
+<img src='https://raw.githubusercontent.com/aaana/UHFReader/master/doc/ui.png'></img>
