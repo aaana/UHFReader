@@ -465,5 +465,10 @@ namespace WindowsFormsApp3
                 frmcomportindex = Convert.ToInt32(temp.Substring(3, temp.Length - 3));
             }
         }
+
+        private void ListView1_EPC_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

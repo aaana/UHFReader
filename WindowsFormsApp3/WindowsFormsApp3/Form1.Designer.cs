@@ -148,6 +148,7 @@
             this.ListView1_EPC.TabIndex = 45;
             this.ListView1_EPC.UseCompatibleStateImageBehavior = false;
             this.ListView1_EPC.View = System.Windows.Forms.View.Details;
+            this.ListView1_EPC.SelectedIndexChanged += new System.EventHandler(this.ListView1_EPC_SelectedIndexChanged);
             // 
             // listViewCol_Number
             // 
