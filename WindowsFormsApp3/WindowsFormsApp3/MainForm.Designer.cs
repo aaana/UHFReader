@@ -34,15 +34,16 @@
             this.startDressLineBtn = new System.Windows.Forms.Button();
             this.stopDressLineBtn = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.dressLineFreTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.readBtn = new System.Windows.Forms.Button();
             this.bindListView = new System.Windows.Forms.ListView();
             this.epc = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.entries = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clearBindBtn = new System.Windows.Forms.Button();
             this.logListView = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clearLogBtn = new System.Windows.Forms.Button();
             this.tagTextBox = new System.Windows.Forms.TextBox();
             this.selectAllCheckBox = new System.Windows.Forms.CheckBox();
@@ -95,6 +96,7 @@
             // 
             // stopDressLineBtn
             // 
+            this.stopDressLineBtn.Enabled = false;
             this.stopDressLineBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.stopDressLineBtn.Location = new System.Drawing.Point(648, 59);
             this.stopDressLineBtn.Name = "stopDressLineBtn";
@@ -113,12 +115,12 @@
             this.label2.TabIndex = 6;
             this.label2.Text = "运行频率";
             // 
-            // textBox2
+            // dressLineFreTextBox
             // 
-            this.textBox2.Location = new System.Drawing.Point(850, 62);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(48, 26);
-            this.textBox2.TabIndex = 8;
+            this.dressLineFreTextBox.Location = new System.Drawing.Point(850, 62);
+            this.dressLineFreTextBox.Name = "dressLineFreTextBox";
+            this.dressLineFreTextBox.Size = new System.Drawing.Size(48, 26);
+            this.dressLineFreTextBox.TabIndex = 8;
             // 
             // label3
             // 
@@ -138,15 +140,16 @@
             this.label4.TabIndex = 10;
             this.label4.Text = "日志";
             // 
-            // button1
+            // readBtn
             // 
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Location = new System.Drawing.Point(277, 60);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 29);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "读取";
-            this.button1.UseVisualStyleBackColor = true;
+            this.readBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.readBtn.Location = new System.Drawing.Point(277, 60);
+            this.readBtn.Name = "readBtn";
+            this.readBtn.Size = new System.Drawing.Size(75, 29);
+            this.readBtn.TabIndex = 11;
+            this.readBtn.Text = "读取";
+            this.readBtn.UseVisualStyleBackColor = false;
+            this.readBtn.Click += new System.EventHandler(this.readBtn_Click);
             // 
             // bindListView
             // 
@@ -183,12 +186,19 @@
             // 
             // logListView
             // 
+            this.logListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
             this.logListView.Location = new System.Drawing.Point(516, 155);
             this.logListView.Name = "logListView";
             this.logListView.Size = new System.Drawing.Size(398, 346);
             this.logListView.TabIndex = 14;
             this.logListView.UseCompatibleStateImageBehavior = false;
             this.logListView.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "日志";
+            this.columnHeader1.Width = 398;
             // 
             // clearLogBtn
             // 
@@ -198,6 +208,7 @@
             this.clearLogBtn.TabIndex = 15;
             this.clearLogBtn.Text = "清除日志";
             this.clearLogBtn.UseVisualStyleBackColor = true;
+            this.clearLogBtn.Click += new System.EventHandler(this.clearLogBtn_Click);
             // 
             // tagTextBox
             // 
@@ -229,10 +240,10 @@
             this.Controls.Add(this.logListView);
             this.Controls.Add(this.clearBindBtn);
             this.Controls.Add(this.bindListView);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.readBtn);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.dressLineFreTextBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.stopDressLineBtn);
             this.Controls.Add(this.startDressLineBtn);
@@ -257,10 +268,10 @@
         private System.Windows.Forms.Button startDressLineBtn;
         private System.Windows.Forms.Button stopDressLineBtn;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox dressLineFreTextBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button readBtn;
         private System.Windows.Forms.ListView bindListView;
         private System.Windows.Forms.Button clearBindBtn;
         private System.Windows.Forms.ListView logListView;
@@ -269,5 +280,6 @@
         private System.Windows.Forms.CheckBox selectAllCheckBox;
         private System.Windows.Forms.ColumnHeader epc;
         private System.Windows.Forms.ColumnHeader entries;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
     }
 }
