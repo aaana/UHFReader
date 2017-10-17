@@ -7,18 +7,22 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using OPCCommunication;
 using System.Windows.Forms;
+using UHFReader;
 
 namespace WindowsFormsApp3
 {
     public partial class MainForm : Form
     {
+        private OPCAPI opc = new OPCAPI();
+
         Dictionary<string, List<int>> bindingDictionary = new Dictionary<string, List<int>>();
-        bool scanReaderStatus = false;
-        System.Timers.Timer scanTimer = new System.Timers.Timer();
         System.Timers.Timer sort1Timer = new System.Timers.Timer();
         System.Timers.Timer sort2Timer = new System.Timers.Timer();
         System.Timers.Timer sort3Timer = new System.Timers.Timer();
+
+        Dictionary<int, int> entryReader = new Dictionary<int, int>();
 
         public MainForm()
         {
@@ -30,8 +34,7 @@ namespace WindowsFormsApp3
         {
             bindListView.FullRowSelect = true;
             logListView.FullRowSelect = false;
-            scanTimer.Interval = 20;
-            scanTimer.Elapsed += new System.Timers.ElapsedEventHandler(readTag);
+
 
             sort1Timer.Interval = 20;
             sort1Timer.Elapsed += new System.Timers.ElapsedEventHandler((s,ev)=>sort(s,ev,1));
@@ -47,6 +50,9 @@ namespace WindowsFormsApp3
         private void startDressLineBtn_Click(object sender, EventArgs e)
         {
             //打开服装线上的三个读写器，并启动三个线程进行监控
+            entryReader.Add(1,CUHFReader.open_port(1));
+            entryReader.Add(2, CUHFReader.open_port(2));
+            entryReader.Add(3, CUHFReader.open_port(3));
             try
             {
                 int dressLineFre = Convert.ToInt32(dressLineFreTextBox.Text);
@@ -56,24 +62,50 @@ namespace WindowsFormsApp3
                 Console.WriteLine(exception);
                 return;
             }
+            //todo 打开读写器
 
-            logListView.Items.Add(new ListViewItem("Readers Running..."));
-            sort1Timer.Enabled = true;
-            sort2Timer.Enabled = true;
-            sort3Timer.Enabled = true;
-            startDressLineBtn.Enabled = false;
-            stopDressLineBtn.Enabled = true;
+            //连接opc
+            if (opc.OPCConect())
+            {
+                opc.SetGroup();
+                // todo 启动机器
+                opc.SetItems(new Item_ChangZhou());
+                opc.ItemDataChange += new OPCAPI.ItemDataChangeEventHandler(DataChange);
+                logListView.Items.Add(new ListViewItem("Readers Running..."));
+                sort1Timer.Enabled = true;
+                sort2Timer.Enabled = true;
+                sort3Timer.Enabled = true;
+                startDressLineBtn.Enabled = false;
+                stopDressLineBtn.Enabled = true;
+            }
+            else
+            {
+                logListView.Items.Add(DateTime.Now + " opc connect fail " + "\n");
+            }
+
+            
         }
 
         private void stopDressLineBtn_Click(object sender, EventArgs e)
         {
+            entryReader.Clear();
             //关闭读写器和线程
-            sort1Timer.Stop();
-            sort2Timer.Stop();
-            sort3Timer.Stop();
-            logListView.Items.Add(new ListViewItem("Readers Stop..."));
-            startDressLineBtn.Enabled = true;
-            stopDressLineBtn.Enabled = false;
+            if (MessageBox.Show("停止运行?", "提示", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                sort1Timer.Stop();
+                sort2Timer.Stop();
+                sort3Timer.Stop();
+                logListView.Items.Add(new ListViewItem("Readers Stop..."));
+                startDressLineBtn.Enabled = true;
+                stopDressLineBtn.Enabled = false;
+                //断开opc连接
+                //todo 停止机器
+                opc.ItemDataChange -= new OPCAPI.ItemDataChangeEventHandler(DataChange);
+                opc.OPCDisConnect();
+                logListView.Items.Add(DateTime.Now + "opc disconnected" + "\n");
+                // todo关闭读写器
+            }
+                      
 
         }
 
@@ -122,6 +154,10 @@ namespace WindowsFormsApp3
                 item.SubItems.Add(sortingEntries);
                 bindListView.Items.Add(item);
             }
+            //清空checkbox
+            for (int j = 0; j < bindCheckedListBox.Items.Count; j++)
+                bindCheckedListBox.SetItemChecked(j, false);
+            selectAllCheckBox.Checked = false;
         }
 
         //全选
@@ -157,7 +193,7 @@ namespace WindowsFormsApp3
                   
                 }
                 deletedEpcsStr = deletedEpcsStr.Substring(0, deletedEpcsStr.Length - 1);
-                if (MessageBox.Show("确认清除绑定#" + deletedEpcsStr + "吗？", "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                if (MessageBox.Show("确定清除绑定#" + deletedEpcsStr + "吗？", "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
                 {
                     Console.WriteLine(deletedEpcsStr);
                     foreach(string epc in deletedEpcs)
@@ -191,21 +227,8 @@ namespace WindowsFormsApp3
         {
             //todo打开读写器，读取标签epc并显示到epc
             //打开
-            if (!scanReaderStatus)
-            {
-                readBtn.Text = "停止";
-                //启动计时器
-                scanTimer.Enabled = true;
-                
-
-            }//停止
-            else
-            {
-                readBtn.Text = "读取";
-                scanTimer.Stop();
-            }
-            scanReaderStatus = !scanReaderStatus;
-            //tagTextBox.Text = 
+            string epc = "100";
+            tagTextBox.Text = epc; 
 
         }
 
@@ -223,7 +246,8 @@ namespace WindowsFormsApp3
         private void sort(object sender, System.Timers.ElapsedEventArgs e,int entryNum)
         {
             //根据各分拣口上的读写器，获取当前读取的衣架上的epc号
-            string epc = entryNum+"";
+            //todo 读取标签
+            string epc = CUHFReader.read_com(entryReader[entryNum]);
             if (bindingDictionary.ContainsKey(epc))
             {
                 List<int> entries = bindingDictionary[epc];
@@ -242,9 +266,14 @@ namespace WindowsFormsApp3
                     {
                         ListViewItem item = new ListViewItem("#"+epc+"在分拣口"+entryNum+"进行分拣");
                         logListView.Items.Add(item);
-                        ListViewItem bindingItem = new ListViewItem(epc);
-                        bindingItem.SubItems.Add(sortingEntries);
-                        bindListView.Items.Add(bindingItem);
+                        foreach (ListViewItem ite in bindListView.Items)
+                        {
+                            if (ite.SubItems[0].Text == epc)
+                            {
+                                ite.SubItems[1].Text = sortingEntries;
+                            }
+                        }
+
                     }));
                     // todo 检测到已下落后将挡板恢复原位 探头的事件？？？
 
@@ -281,8 +310,31 @@ namespace WindowsFormsApp3
             return sortingEntries;
         }
 
+        private void clearAllBindingBtn_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("确定清空所有绑定吗？", "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            {
+                bindingDictionary.Clear();
+                bindListView.Items.Clear();
+            }
+        }
 
-        //
+        private void DataChange(Dictionary<string, object> itemValues)
+        {
+            /*
+            foreach (string itemName in itemValues.Keys)
+            {
+                switch (itemName)
+                {
+                    case :
+                        {
+
+                        }
+                }
+                */
+
+            //
+        }
 
     }
 }
