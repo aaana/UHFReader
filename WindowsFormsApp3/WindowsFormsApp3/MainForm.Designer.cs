@@ -183,7 +183,7 @@
             // 
             this.logListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-            this.logListView.Font = new System.Drawing.Font("微软雅黑", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.logListView.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.logListView.Location = new System.Drawing.Point(24, 105);
             this.logListView.Name = "logListView";
             this.logListView.Size = new System.Drawing.Size(419, 425);

@@ -9,16 +9,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using OPCCommunication;
 using System.Windows.Forms;
-using UHFReader;
+
+using ReaderDLL;
 using System.Collections.Concurrent;
 using System.Configuration;
 using System.Globalization;
+using CUHFReaderNameSpace;
 
 namespace WindowsFormsApp3
 {
     public partial class MainForm : Form
     {
         private OPCAPI opc = new OPCAPI();
+        UHFReader CardReader = new UHFReader();
 
         ConcurrentDictionary<string, List<int>> bindingDictionary = new ConcurrentDictionary<string, List<int>>();
         System.Timers.Timer sort1Timer = new System.Timers.Timer();
@@ -244,7 +247,24 @@ namespace WindowsFormsApp3
         {
             //todo打开读写器，读取标签epc并显示到epc
             //打开
-            string epc = "100";
+            
+            string epc = CardReader.readEPC();
+            switch (epc)
+            {
+                case "OpFaidedException":
+                    MessageBox.Show("Option failed", "错误");
+                    return;
+                case "ModuleException":
+                    MessageBox.Show("Module Exception", "错误");
+                    return;
+                case "success":
+                    MessageBox.Show("写卡成功", "");
+                    break;
+                default:
+                    break;
+            }
+            epc = epc.ToUpper();
+            //string epc = "100";
             tagTextBox.Text = epc;
 
         }
