@@ -183,9 +183,10 @@
             // 
             this.logListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-            this.logListView.Location = new System.Drawing.Point(24, 184);
+            this.logListView.Font = new System.Drawing.Font("微软雅黑", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.logListView.Location = new System.Drawing.Point(24, 105);
             this.logListView.Name = "logListView";
-            this.logListView.Size = new System.Drawing.Size(398, 346);
+            this.logListView.Size = new System.Drawing.Size(419, 425);
             this.logListView.TabIndex = 14;
             this.logListView.UseCompatibleStateImageBehavior = false;
             this.logListView.View = System.Windows.Forms.View.Details;
@@ -201,7 +202,7 @@
             this.clearLogBtn.Name = "clearLogBtn";
             this.clearLogBtn.Size = new System.Drawing.Size(87, 32);
             this.clearLogBtn.TabIndex = 15;
-            this.clearLogBtn.Text = "清除日志";
+            this.clearLogBtn.Text = "清空日志";
             this.clearLogBtn.UseVisualStyleBackColor = true;
             this.clearLogBtn.Click += new System.EventHandler(this.clearLogBtn_Click);
             // 

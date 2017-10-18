@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using UHFReader;
 using System.Collections.Concurrent;
 using System.Configuration;
+using System.Globalization;
 
 namespace WindowsFormsApp3
 {
@@ -38,13 +39,13 @@ namespace WindowsFormsApp3
             logListView.FullRowSelect = false;
 
 
-            sort1Timer.Interval = 20;
+            sort1Timer.Interval = 30;
             sort1Timer.Elapsed += new System.Timers.ElapsedEventHandler((s, ev) => sort(s, ev, 1));
 
-            sort2Timer.Interval = 20;
+            sort2Timer.Interval = 30;
             sort2Timer.Elapsed += new System.Timers.ElapsedEventHandler((s, ev) => sort(s, ev, 2));
 
-            sort3Timer.Interval = 20;
+            sort3Timer.Interval = 30;
             sort3Timer.Elapsed += new System.Timers.ElapsedEventHandler((s, ev) => sort(s, ev, 3));
 
         }
@@ -52,12 +53,19 @@ namespace WindowsFormsApp3
         private void startDressLineBtn_Click(object sender, EventArgs e)
         {
             //打开服装线上的三个读写器，并启动三个线程进行监控
-            entryReader.Add(1, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort1Port"))));
-            entryReader.Add(2, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort2Port"))));
-            entryReader.Add(3, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort3Port"))));
+            
             try
             {
                 int dressLineFre = Convert.ToInt32(dressLineFreTextBox.Text);
+                entryReader.Add(1, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort1Port"))));
+                entryReader.Add(2, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort2Port"))));
+                entryReader.Add(3, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort3Port"))));
+                logListView.Items.Add(new ListViewItem("Readers Running..."));
+                sort1Timer.Enabled = true;
+                sort2Timer.Enabled = true;
+                sort3Timer.Enabled = true;
+                startDressLineBtn.Enabled = false;
+                stopDressLineBtn.Enabled = true;
             }
             catch (Exception exception)
             {
@@ -86,12 +94,7 @@ namespace WindowsFormsApp3
             {
                 logListView.Items.Add(DateTime.Now + " opc connect fail " + "\n");
             }*/
-            logListView.Items.Add(new ListViewItem("Readers Running..."));
-            sort1Timer.Enabled = true;
-            sort2Timer.Enabled = true;
-            sort3Timer.Enabled = true;
-            startDressLineBtn.Enabled = false;
-            stopDressLineBtn.Enabled = true;
+            
 
 
         }
@@ -111,8 +114,8 @@ namespace WindowsFormsApp3
                 stopDressLineBtn.Enabled = false;
                 //断开opc连接
                 //todo 停止机器
-                opc.ItemDataChange -= new OPCAPI.ItemDataChangeEventHandler(DataChange);
-                opc.OPCDisConnect();
+                //opc.ItemDataChange -= new OPCAPI.ItemDataChangeEventHandler(DataChange);
+                //opc.OPCDisConnect();
                 logListView.Items.Add(DateTime.Now + "opc disconnected" + "\n");
                 // todo关闭读写器
             }
@@ -253,20 +256,21 @@ namespace WindowsFormsApp3
             //根据各分拣口上的读写器，获取当前读取的衣架上的epc号
             //todo 读取标签
             string epc = CUHFReader.read_com(entryReader[entryNum]);
+            /*
             if (epc != null)
             {
                 this.BeginInvoke(method: new Action(() =>
                 {
-                    ListViewItem item = new ListViewItem("分拣口" + entryNum + "读到" + epc);
+                    ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:MM:ss:fff", DateTimeFormatInfo.InvariantInfo) +":分拣口" + entryNum + "读到" + epc);
                     logListView.Items.Add(item);
                 }));
-            }
+            }*/
         
             if (epc != null)
             { 
                 if (!bindingDictionary.ContainsKey(epc))
                 {
-                    Console.WriteLine("在分拣口" + entryNum + "检测到#" + epc + "未绑定！");
+                    Console.WriteLine(DateTime.Now.ToString("HH:MM:ss:fff", DateTimeFormatInfo.InvariantInfo)+"在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
                     return;
                 }
                 List<int> entries = bindingDictionary[epc];
@@ -281,13 +285,17 @@ namespace WindowsFormsApp3
 
                     this.BeginInvoke(method: new Action(() =>
                     {
-                        ListViewItem item = new ListViewItem("#" + epc + "在分拣口" + entryNum + "进行分拣");
+                        ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:MM:ss:fff  ", DateTimeFormatInfo.InvariantInfo) + "#" + epc + "在分拣口" + entryNum + "进行分拣");
                         logListView.Items.Add(item);
                         foreach (ListViewItem ite in bindListView.Items)
                         {
                             if (ite.SubItems[0].Text == epc)
                             {
                                 ite.SubItems[1].Text = sortingEntries;
+                                if(sortingEntries.Length == 0)
+                                {
+                                    ite.Remove();
+                                }
                             }
                         }
 
