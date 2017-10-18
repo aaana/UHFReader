@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using OPCCommunication;
 using System.Windows.Forms;
 using UHFReader;
+using System.Collections.Concurrent;
+using System.Configuration;
 
 namespace WindowsFormsApp3
 {
@@ -17,7 +19,7 @@ namespace WindowsFormsApp3
     {
         private OPCAPI opc = new OPCAPI();
 
-        Dictionary<string, List<int>> bindingDictionary = new Dictionary<string, List<int>>();
+        ConcurrentDictionary<string, List<int>> bindingDictionary = new ConcurrentDictionary<string, List<int>>();
         System.Timers.Timer sort1Timer = new System.Timers.Timer();
         System.Timers.Timer sort2Timer = new System.Timers.Timer();
         System.Timers.Timer sort3Timer = new System.Timers.Timer();
@@ -37,34 +39,36 @@ namespace WindowsFormsApp3
 
 
             sort1Timer.Interval = 20;
-            sort1Timer.Elapsed += new System.Timers.ElapsedEventHandler((s,ev)=>sort(s,ev,1));
+            sort1Timer.Elapsed += new System.Timers.ElapsedEventHandler((s, ev) => sort(s, ev, 1));
 
             sort2Timer.Interval = 20;
-            sort2Timer.Elapsed += new System.Timers.ElapsedEventHandler((s,ev) => sort(s,ev,2));
+            sort2Timer.Elapsed += new System.Timers.ElapsedEventHandler((s, ev) => sort(s, ev, 2));
 
             sort3Timer.Interval = 20;
-            sort3Timer.Elapsed += new System.Timers.ElapsedEventHandler((s,ev) => sort(s,ev,3));
+            sort3Timer.Elapsed += new System.Timers.ElapsedEventHandler((s, ev) => sort(s, ev, 3));
 
         }
 
         private void startDressLineBtn_Click(object sender, EventArgs e)
         {
             //打开服装线上的三个读写器，并启动三个线程进行监控
-            entryReader.Add(1,CUHFReader.open_port(1));
-            entryReader.Add(2, CUHFReader.open_port(2));
-            entryReader.Add(3, CUHFReader.open_port(3));
+            entryReader.Add(1, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort1Port"))));
+            entryReader.Add(2, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort2Port"))));
+            entryReader.Add(3, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort3Port"))));
             try
             {
                 int dressLineFre = Convert.ToInt32(dressLineFreTextBox.Text);
-            }catch(Exception exception)
+            }
+            catch (Exception exception)
             {
-                MessageBox.Show("请输入正确的频率值","Warning");
+                MessageBox.Show("请输入正确的频率值", "Warning");
                 Console.WriteLine(exception);
                 return;
             }
             //todo 打开读写器
 
             //连接opc
+            /*
             if (opc.OPCConect())
             {
                 opc.SetGroup();
@@ -81,20 +85,27 @@ namespace WindowsFormsApp3
             else
             {
                 logListView.Items.Add(DateTime.Now + " opc connect fail " + "\n");
-            }
+            }*/
+            logListView.Items.Add(new ListViewItem("Readers Running..."));
+            sort1Timer.Enabled = true;
+            sort2Timer.Enabled = true;
+            sort3Timer.Enabled = true;
+            startDressLineBtn.Enabled = false;
+            stopDressLineBtn.Enabled = true;
 
-            
+
         }
 
         private void stopDressLineBtn_Click(object sender, EventArgs e)
         {
-            entryReader.Clear();
+            
             //关闭读写器和线程
             if (MessageBox.Show("停止运行?", "提示", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 sort1Timer.Stop();
                 sort2Timer.Stop();
                 sort3Timer.Stop();
+                entryReader.Clear();
                 logListView.Items.Add(new ListViewItem("Readers Stop..."));
                 startDressLineBtn.Enabled = true;
                 stopDressLineBtn.Enabled = false;
@@ -105,7 +116,7 @@ namespace WindowsFormsApp3
                 logListView.Items.Add(DateTime.Now + "opc disconnected" + "\n");
                 // todo关闭读写器
             }
-                      
+
 
         }
 
@@ -149,7 +160,7 @@ namespace WindowsFormsApp3
             }
             if (MessageBox.Show("确认绑定#" + epc + "\n到" + sortingEntries + "分拣口吗？", "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
-                bindingDictionary.Add(epc, entries);
+                bindingDictionary[epc] = entries;
                 ListViewItem item = new ListViewItem(epc);
                 item.SubItems.Add(sortingEntries);
                 bindListView.Items.Add(item);
@@ -182,7 +193,7 @@ namespace WindowsFormsApp3
             {
                 List<string> deletedEpcs = new List<string>();
                 string deletedEpcsStr = "";
-                for(int i = 0;i< bindListView.SelectedItems.Count; i++)
+                for (int i = 0; i < bindListView.SelectedItems.Count; i++)
                 {
                     string selectedEpc = bindListView.SelectedItems[i].SubItems[0].Text;
                     if (!deletedEpcs.Contains(selectedEpc))
@@ -190,15 +201,18 @@ namespace WindowsFormsApp3
                         deletedEpcs.Add(selectedEpc);
                         deletedEpcsStr += selectedEpc + ",";
                     }
-                  
+
                 }
                 deletedEpcsStr = deletedEpcsStr.Substring(0, deletedEpcsStr.Length - 1);
                 if (MessageBox.Show("确定清除绑定#" + deletedEpcsStr + "吗？", "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
                 {
                     Console.WriteLine(deletedEpcsStr);
-                    foreach(string epc in deletedEpcs)
+                    foreach (string epc in deletedEpcs)
                     {
-                        bindingDictionary.Remove(epc);
+                        List<int> list = null;
+                        while (!bindingDictionary.TryRemove(epc, out list))
+                        {
+                        };
                         foreach (ListViewItem item in bindListView.Items)
                         {
                             if (item.SubItems[0].Text == epc)
@@ -207,7 +221,7 @@ namespace WindowsFormsApp3
                             }
                         }
                     }
-                   
+
                     //bindListView.SelectedItems[0].Remove();
                     //bindListView.Items.Remove(bindListView.SelectedItems[0]);
                 }
@@ -228,43 +242,46 @@ namespace WindowsFormsApp3
             //todo打开读写器，读取标签epc并显示到epc
             //打开
             string epc = "100";
-            tagTextBox.Text = epc; 
+            tagTextBox.Text = epc;
 
         }
 
-        private void readTag(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            //获取所读标签的epc号
-            string epc = DateTime.Now.Millisecond.ToString();
-            this.BeginInvoke(method: new Action(() =>
-            {
-                tagTextBox.Text = epc;
-            }));
-        }
 
         //用于监控各分拣口
-        private void sort(object sender, System.Timers.ElapsedEventArgs e,int entryNum)
+        private void sort(object sender, System.Timers.ElapsedEventArgs e, int entryNum)
         {
             //根据各分拣口上的读写器，获取当前读取的衣架上的epc号
             //todo 读取标签
             string epc = CUHFReader.read_com(entryReader[entryNum]);
-            if (bindingDictionary.ContainsKey(epc))
+            if (epc != null)
             {
+                this.BeginInvoke(method: new Action(() =>
+                {
+                    ListViewItem item = new ListViewItem("分拣口" + entryNum + "读到" + epc);
+                    logListView.Items.Add(item);
+                }));
+            }
+        
+            if (epc != null)
+            { 
+                if (!bindingDictionary.ContainsKey(epc))
+                {
+                    Console.WriteLine("在分拣口" + entryNum + "检测到#" + epc + "未绑定！");
+                    return;
+                }
                 List<int> entries = bindingDictionary[epc];
                 if (entries.Contains(entryNum))
                 {// 进行分拣
-                    //todo操作硬件
+                 //todo操作硬件
 
 
                     //更新绑定和界面
                     entries.Remove(entryNum);
-                    bindingDictionary.Remove(epc);
-                    bindingDictionary.Add(epc, entries);
                     string sortingEntries = listToString(entries);
-                  
+
                     this.BeginInvoke(method: new Action(() =>
                     {
-                        ListViewItem item = new ListViewItem("#"+epc+"在分拣口"+entryNum+"进行分拣");
+                        ListViewItem item = new ListViewItem("#" + epc + "在分拣口" + entryNum + "进行分拣");
                         logListView.Items.Add(item);
                         foreach (ListViewItem ite in bindListView.Items)
                         {
@@ -282,11 +299,7 @@ namespace WindowsFormsApp3
                 {//不进行分拣
 
                 }
-            }
-            else
-            {
-                Console.WriteLine("在分拣口"+entryNum+"检测到#"+epc+"未绑定！");
-            }
+           }
         }
 
         //清除日志
@@ -334,6 +347,18 @@ namespace WindowsFormsApp3
                 */
 
             //
+        }
+
+        private static string GetAppConfig(string strKey)
+        {
+            foreach (string key in ConfigurationManager.AppSettings)
+            {
+                if (key == strKey)
+                {
+                    return ConfigurationManager.AppSettings[strKey];
+                }
+            }
+            return null;
         }
 
     }

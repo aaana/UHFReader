@@ -47,8 +47,8 @@
             this.tagTextBox = new System.Windows.Forms.TextBox();
             this.selectAllCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.clearAllBindingBtn = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -209,7 +209,7 @@
             // 
             this.tagTextBox.Location = new System.Drawing.Point(68, 49);
             this.tagTextBox.Name = "tagTextBox";
-            this.tagTextBox.Size = new System.Drawing.Size(144, 26);
+            this.tagTextBox.Size = new System.Drawing.Size(262, 26);
             this.tagTextBox.TabIndex = 16;
             // 
             // selectAllCheckBox
@@ -241,6 +241,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "标签读取与绑定";
             // 
+            // clearAllBindingBtn
+            // 
+            this.clearAllBindingBtn.Location = new System.Drawing.Point(201, 537);
+            this.clearAllBindingBtn.Name = "clearAllBindingBtn";
+            this.clearAllBindingBtn.Size = new System.Drawing.Size(86, 30);
+            this.clearAllBindingBtn.TabIndex = 18;
+            this.clearAllBindingBtn.Text = "清空绑定";
+            this.clearAllBindingBtn.UseVisualStyleBackColor = true;
+            this.clearAllBindingBtn.Click += new System.EventHandler(this.clearAllBindingBtn_Click);
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.clearLogBtn);
@@ -256,16 +266,6 @@
             this.groupBox2.TabIndex = 19;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "服装线操作";
-            // 
-            // clearAllBindingBtn
-            // 
-            this.clearAllBindingBtn.Location = new System.Drawing.Point(201, 537);
-            this.clearAllBindingBtn.Name = "clearAllBindingBtn";
-            this.clearAllBindingBtn.Size = new System.Drawing.Size(86, 30);
-            this.clearAllBindingBtn.TabIndex = 18;
-            this.clearAllBindingBtn.Text = "清空绑定";
-            this.clearAllBindingBtn.UseVisualStyleBackColor = true;
-            this.clearAllBindingBtn.Click += new System.EventHandler(this.clearAllBindingBtn_Click);
             // 
             // MainForm
             // 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace UHFReader
 {
@@ -31,6 +32,9 @@ namespace UHFReader
             byte fComAdr = 0xff;
 
             int i;
+     
+
+            
             try
             {
                 for (i = 6; i >= 0; i--)
@@ -49,11 +53,13 @@ namespace UHFReader
             finally
             {
             }
+            
             if ((fOpenComIndex == -1) && (openresult == 0x30))
             {
                 return -1;
             }
             return fOpenComIndex;
+
         }
 
 
