@@ -315,104 +315,7 @@ namespace WindowsFormsApp3
         }
 
 
-        //用于监控各分拣口
-        private void sort(object sender, System.Timers.ElapsedEventArgs e, int entryNum)
-        {
-            //根据各分拣口上的读写器，获取当前读取的衣架上的epc号
-            //todo 读取标签
-            long start = DateTime.Now.Ticks;
-            string epc = "";
-            //string epc = CUHFReader.read_com(entryReader[entryNum]);
-            switch (entryNum){
-                case 1:
-                    epc = sort1Reader.readEPC();
-                    break;
-                case 2:
-                    epc = sort2Reader.readEPC();
-                    break;
-                case 3:
-                    epc = sort3Reader.readEPC();
-                    break;
-                default:
-                    break;
-            }
-            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + " 线程" + entryNum + "运行");
-            if (epc.Length!=0)
-            {
-                this.BeginInvoke(method: new Action(() =>
-                {
-                    ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + ":分拣口" + entryNum + "读到" + epc);
-                    logListView.Items.Add(item);
-                }));
-                switch (checkSort(epc, (int)entryNum))
-                {
-                    case 1:
-                        doSort(epc, (int)entryNum);
-                        break;
-                    case -1:
-                        Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
-                        break;
-                    case 0:
-                        Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "不分拣");
-                        break;
-                    default:
-                        break;
-                }
-            }
-            
-         
-            /*
-            if (epc.Length!=0)
-            {
-
-             
-                if (!bindingDictionary.ContainsKey(epc))
-                {
-                    Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
-
-                    return;
-                }
-                List<int> entries = bindingDictionary[epc];
-                if (entries.Contains(entryNum))
-                {// 进行分拣
-                 //todo操作硬件
-                 
-                    writeSortOpc(entryNum, 1);
-                    //Thread.Sleep(10);
-                    writeSortOpc(entryNum, 0);
-
-                    //更新绑定和界面
-                    entries.Remove(entryNum);
-                    string sortingEntries = listToString(entries);
-
-                    this.BeginInvoke(method: new Action(() =>
-                    {
-                        ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:mm:ss:fff  ", DateTimeFormatInfo.InvariantInfo) + "#" + epc + "在分拣口" + entryNum + "进行分拣");
-                        logListView.Items.Add(item);
-                        foreach (ListViewItem ite in bindListView.Items)
-                        {
-                            if (ite.SubItems[0].Text == epc)
-                            {
-                                ite.SubItems[1].Text = sortingEntries;
-                                if (sortingEntries.Length == 0)
-                                {
-                                    ite.Remove();
-                                }
-                            }
-                        }
-
-                    }));
-                    // todo 检测到已下落后将挡板恢复原位 探头的事件？？？
-
-                }
-                else
-                {//不进行分拣
-
-                }
-            }*/
-            long end = DateTime.Now.Ticks;
-            Console.WriteLine("time execute time " + (end - start));
-        }
+        
 
         // -2=>未读到 -1=>未绑定 1=>分拣 0=>不分拣
         private int checkSort(string epc, int entryNum)
@@ -641,7 +544,7 @@ namespace WindowsFormsApp3
             return null;
         }
 
-
+        /*
         private void button1_Click(object sender, EventArgs e)
         {
 
@@ -655,7 +558,7 @@ namespace WindowsFormsApp3
                 /*
                 doSort(3, 1);
                 Thread.Sleep(30);
-                doSort(3, 0);*/
+                doSort(3, 0);
             }
         }
 
@@ -738,5 +641,105 @@ namespace WindowsFormsApp3
                 
 
         }
+
+        //用于监控各分拣口
+        private void sort(object sender, System.Timers.ElapsedEventArgs e, int entryNum)
+        {
+            //根据各分拣口上的读写器，获取当前读取的衣架上的epc号
+            //todo 读取标签
+            long start = DateTime.Now.Ticks;
+            string epc = "";
+            //string epc = CUHFReader.read_com(entryReader[entryNum]);
+            switch (entryNum)
+            {
+                case 1:
+                    epc = sort1Reader.readEPC();
+                    break;
+                case 2:
+                    epc = sort2Reader.readEPC();
+                    break;
+                case 3:
+                    epc = sort3Reader.readEPC();
+                    break;
+                default:
+                    break;
+            }
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + " 线程" + entryNum + "运行");
+            if (epc.Length != 0)
+            {
+                this.BeginInvoke(method: new Action(() =>
+                {
+                    ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + ":分拣口" + entryNum + "读到" + epc);
+                    logListView.Items.Add(item);
+                }));
+                switch (checkSort(epc, (int)entryNum))
+                {
+                    case 1:
+                        doSort(epc, (int)entryNum);
+                        break;
+                    case -1:
+                        Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
+                        break;
+                    case 0:
+                        Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "不分拣");
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+
+            
+            if (epc.Length!=0)
+            {
+
+             
+                if (!bindingDictionary.ContainsKey(epc))
+                {
+                    Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
+
+                    return;
+                }
+                List<int> entries = bindingDictionary[epc];
+                if (entries.Contains(entryNum))
+                {// 进行分拣
+                 //todo操作硬件
+                 
+                    writeSortOpc(entryNum, 1);
+                    //Thread.Sleep(10);
+                    writeSortOpc(entryNum, 0);
+
+                    //更新绑定和界面
+                    entries.Remove(entryNum);
+                    string sortingEntries = listToString(entries);
+
+                    this.BeginInvoke(method: new Action(() =>
+                    {
+                        ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:mm:ss:fff  ", DateTimeFormatInfo.InvariantInfo) + "#" + epc + "在分拣口" + entryNum + "进行分拣");
+                        logListView.Items.Add(item);
+                        foreach (ListViewItem ite in bindListView.Items)
+                        {
+                            if (ite.SubItems[0].Text == epc)
+                            {
+                                ite.SubItems[1].Text = sortingEntries;
+                                if (sortingEntries.Length == 0)
+                                {
+                                    ite.Remove();
+                                }
+                            }
+                        }
+
+                    }));
+                    // todo 检测到已下落后将挡板恢复原位 探头的事件？？？
+
+                }
+                else
+                {//不进行分拣
+
+                }
+            }
+            long end = DateTime.Now.Ticks;
+            Console.WriteLine("time execute time " + (end - start));
+        }*/
     }
 }
