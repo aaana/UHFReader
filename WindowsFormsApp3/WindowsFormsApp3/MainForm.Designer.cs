@@ -130,7 +130,6 @@
             this.bindListView.TabIndex = 12;
             this.bindListView.UseCompatibleStateImageBehavior = false;
             this.bindListView.View = System.Windows.Forms.View.Details;
-            this.bindListView.SelectedIndexChanged += new System.EventHandler(this.bindListView_SelectedIndexChanged);
             // 
             // epc
             // 

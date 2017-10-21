@@ -1,8 +1,6 @@
 ﻿using ModuleLibrary;
 using ModuleTech;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 
 namespace WindowsFormsApp3
 {
@@ -36,11 +34,7 @@ namespace WindowsFormsApp3
         {
             
             try
-            {
-                modulerdr = Reader.Create(readerCom, ModuleTech.Region.NA, 1);
-                modulerdr.ParamSet("ReadPlan", new SimpleReadPlan(TagProtocol.GEN2, new int[] { 1 }));
-                modulerdr.ParamSet("TagopAntenna", 1);
-                modulerdr.ParamSet("ReadTxPower", readerPower);
+            {               
                 TagData epccode = new TagData(epc);
                 modulerdr.WriteTag(null, epccode);
                 modulerdr.Disconnect();
