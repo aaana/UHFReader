@@ -1,34 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using OPCCommunication;
-using System.Windows.Forms;
-
-using ReaderDLL;
+﻿using OPCCommunication;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
-using CUHFReaderNameSpace;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace WindowsFormsApp3
 {
     public partial class MainForm : Form
     {
         private OPCAPI opc = new OPCAPI();
-        UHFReader CardReader = new UHFReader();
+        UHFReader CardReader = new UHFReader(GetAppConfig("ReaderComScan"),Convert.ToInt32(GetAppConfig("ReadTxPowerScan")));
+        UHFReader sort1Reader;
+        UHFReader sort2Reader;
+        UHFReader sort3Reader;
+        private static int DOWN = 1;
+        private static int UP = 0;
+
 
         ConcurrentDictionary<string, List<int>> bindingDictionary = new ConcurrentDictionary<string, List<int>>();
+        
+        /*
         System.Timers.Timer sort1Timer = new System.Timers.Timer();
         System.Timers.Timer sort2Timer = new System.Timers.Timer();
         System.Timers.Timer sort3Timer = new System.Timers.Timer();
+        */
+        
 
-        Dictionary<int, int> entryReader = new Dictionary<int, int>();
+        //Dictionary<int, int> entryReader = new Dictionary<int, int>();
 
         public MainForm()
         {
@@ -41,7 +42,7 @@ namespace WindowsFormsApp3
             bindListView.FullRowSelect = true;
             logListView.FullRowSelect = false;
 
-
+            /*
             sort1Timer.Interval = 30;
             sort1Timer.Elapsed += new System.Timers.ElapsedEventHandler((s, ev) => sort(s, ev, 1));
 
@@ -50,23 +51,29 @@ namespace WindowsFormsApp3
 
             sort3Timer.Interval = 30;
             sort3Timer.Elapsed += new System.Timers.ElapsedEventHandler((s, ev) => sort(s, ev, 3));
-
+            */
+            
         }
+
 
         private void startDressLineBtn_Click(object sender, EventArgs e)
         {
             //打开服装线上的三个读写器，并启动三个线程进行监控
-            
+
             try
             {
-                int dressLineFre = Convert.ToInt32(dressLineFreTextBox.Text);
+                //int dressLineFre = Convert.ToInt32(dressLineFreTextBox.Text);
+                sort1Reader = new UHFReader(GetAppConfig("ReaderComSort1"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort1")));
+                sort2Reader = new UHFReader(GetAppConfig("ReaderComSort2"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort2")));
+                sort3Reader = new UHFReader(GetAppConfig("ReaderComSort3"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort3")));
+                /*
                 entryReader.Add(1, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort1Port"))));
                 entryReader.Add(2, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort2Port"))));
                 entryReader.Add(3, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort3Port"))));
-                logListView.Items.Add(new ListViewItem("Readers Running..."));
-                sort1Timer.Enabled = true;
-                sort2Timer.Enabled = true;
-                sort3Timer.Enabled = true;
+                */
+                logListView.Items.Add(new ListViewItem(DateTime.Now + " Readers Running..."));
+
+
                 startDressLineBtn.Enabled = false;
                 stopDressLineBtn.Enabled = true;
             }
@@ -74,56 +81,76 @@ namespace WindowsFormsApp3
             {
                 MessageBox.Show("请输入正确的频率值", "Warning");
                 Console.WriteLine(exception);
+                logListView.Items.Add(DateTime.Now + " Readers connect fail " + "\n");
                 return;
             }
             //todo 打开读写器
 
             //连接opc
-            /*
+
             if (opc.OPCConect())
             {
                 opc.SetGroup();
                 // todo 启动机器
-                opc.SetItems(new Item_ChangZhou());
+                opc.SetItems(new Item_SJTUDress());
                 opc.ItemDataChange += new OPCAPI.ItemDataChangeEventHandler(DataChange);
-                logListView.Items.Add(new ListViewItem("Readers Running..."));
+                logListView.Items.Add(new ListViewItem(DateTime.Now + " opc connected"));
+                
+                
+                /*
                 sort1Timer.Enabled = true;
                 sort2Timer.Enabled = true;
-                sort3Timer.Enabled = true;
-                startDressLineBtn.Enabled = false;
-                stopDressLineBtn.Enabled = true;
+                sort3Timer.Enabled = true;*/
+
+
+                //Thread thread1 = new Thread(new ParameterizedThreadStart(doSort(1)));
+
             }
             else
             {
                 logListView.Items.Add(DateTime.Now + " opc connect fail " + "\n");
-            }*/
-            
-
+                MessageBox.Show("opc连接失败", "Warning");
+                return;
+            }
 
         }
 
         private void stopDressLineBtn_Click(object sender, EventArgs e)
         {
-            
+
             //关闭读写器和线程
             if (MessageBox.Show("停止运行?", "提示", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                sort1Timer.Stop();
-                sort2Timer.Stop();
-                sort3Timer.Stop();
-                entryReader.Clear();
-                logListView.Items.Add(new ListViewItem("Readers Stop..."));
+                /*
+                sort1Timer.Enabled = false;
+                sort2Timer.Enabled = false;
+                sort3Timer.Enabled = false;
+                */
+
+                //entryReader.Clear();
                 startDressLineBtn.Enabled = true;
                 stopDressLineBtn.Enabled = false;
                 //断开opc连接
                 //todo 停止机器
-                //opc.ItemDataChange -= new OPCAPI.ItemDataChangeEventHandler(DataChange);
-                //opc.OPCDisConnect();
-                logListView.Items.Add(DateTime.Now + "opc disconnected" + "\n");
+                opc.ItemDataChange -= new OPCAPI.ItemDataChangeEventHandler(DataChange);
+                opc.OPCDisConnect();
+                logListView.Items.Add(DateTime.Now + " opc disconnected" + "\n");
                 // todo关闭读写器
+                //stopReaders();
+                logListView.Items.Add(DateTime.Now + " Readers stop" + "\n");
+
             }
 
 
+        }
+
+        private void stopReaders()
+        {
+            /*
+            foreach (int port in entryReader.Values)
+            {
+                CUHFReader.close_port(port);
+            }*/
         }
 
         //绑定epc和分拣口
@@ -247,25 +274,33 @@ namespace WindowsFormsApp3
         {
             //todo打开读写器，读取标签epc并显示到epc
             //打开
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo));
+    
+                string epc = CardReader.readEPC();
+
+                switch (epc)
+                {
+                    case "OpFaidedException":
+                        MessageBox.Show("Option failed", "错误");
+                        return;
+                    case "ModuleException":
+                        MessageBox.Show("Module Exception", "错误");
+                        return;
+                    case "success":
+                        MessageBox.Show("写卡成功", "");
+                        break;
+                    default:
+                        Console.WriteLine(epc);
+                        break;
+                }
+                epc = epc.ToUpper();
+                //string epc = "100";
+                tagTextBox.Text = epc;
+              
             
-            string epc = CardReader.readEPC();
-            switch (epc)
-            {
-                case "OpFaidedException":
-                    MessageBox.Show("Option failed", "错误");
-                    return;
-                case "ModuleException":
-                    MessageBox.Show("Module Exception", "错误");
-                    return;
-                case "success":
-                    MessageBox.Show("写卡成功", "");
-                    break;
-                default:
-                    break;
-            }
-            epc = epc.ToUpper();
-            //string epc = "100";
-            tagTextBox.Text = epc;
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo));
+
+
 
         }
 
@@ -275,29 +310,66 @@ namespace WindowsFormsApp3
         {
             //根据各分拣口上的读写器，获取当前读取的衣架上的epc号
             //todo 读取标签
-            string epc = CUHFReader.read_com(entryReader[entryNum]);
-            /*
-            if (epc != null)
+            long start = DateTime.Now.Ticks;
+            string epc = "";
+            //string epc = CUHFReader.read_com(entryReader[entryNum]);
+            switch (entryNum){
+                case 1:
+                    epc = sort1Reader.readEPC();
+                    break;
+                case 2:
+                    epc = sort2Reader.readEPC();
+                    break;
+                case 3:
+                    epc = sort3Reader.readEPC();
+                    break;
+                default:
+                    break;
+            }
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + " 线程" + entryNum + "运行");
+            if (epc.Length!=0)
             {
                 this.BeginInvoke(method: new Action(() =>
                 {
-                    ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:MM:ss:fff", DateTimeFormatInfo.InvariantInfo) +":分拣口" + entryNum + "读到" + epc);
+                    ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + ":分拣口" + entryNum + "读到" + epc);
                     logListView.Items.Add(item);
                 }));
-            }*/
-        
-            if (epc != null)
-            { 
+                switch (checkSort(epc, (int)entryNum))
+                {
+                    case 1:
+                        doSort(epc, (int)entryNum);
+                        break;
+                    case -1:
+                        Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
+                        break;
+                    case 0:
+                        Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "不分拣");
+                        break;
+                    default:
+                        break;
+                }
+            }
+            
+         
+            /*
+            if (epc.Length!=0)
+            {
+
+             
                 if (!bindingDictionary.ContainsKey(epc))
                 {
-                    Console.WriteLine(DateTime.Now.ToString("HH:MM:ss:fff", DateTimeFormatInfo.InvariantInfo)+"在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
+                    Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
+
                     return;
                 }
                 List<int> entries = bindingDictionary[epc];
                 if (entries.Contains(entryNum))
                 {// 进行分拣
                  //todo操作硬件
-
+                 
+                    writeSortOpc(entryNum, 1);
+                    //Thread.Sleep(10);
+                    writeSortOpc(entryNum, 0);
 
                     //更新绑定和界面
                     entries.Remove(entryNum);
@@ -305,14 +377,14 @@ namespace WindowsFormsApp3
 
                     this.BeginInvoke(method: new Action(() =>
                     {
-                        ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:MM:ss:fff  ", DateTimeFormatInfo.InvariantInfo) + "#" + epc + "在分拣口" + entryNum + "进行分拣");
+                        ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:mm:ss:fff  ", DateTimeFormatInfo.InvariantInfo) + "#" + epc + "在分拣口" + entryNum + "进行分拣");
                         logListView.Items.Add(item);
                         foreach (ListViewItem ite in bindListView.Items)
                         {
                             if (ite.SubItems[0].Text == epc)
                             {
                                 ite.SubItems[1].Text = sortingEntries;
-                                if(sortingEntries.Length == 0)
+                                if (sortingEntries.Length == 0)
                                 {
                                     ite.Remove();
                                 }
@@ -327,9 +399,87 @@ namespace WindowsFormsApp3
                 {//不进行分拣
 
                 }
-           }
+            }*/
+            long end = DateTime.Now.Ticks;
+            Console.WriteLine("time execute time " + (end - start));
         }
 
+        // -2=>未读到 -1=>未绑定 1=>分拣 0=>不分拣
+        private int checkSort(string epc, int entryNum)
+        {
+            if (epc.Length == 0)
+                return -2;
+            if (!bindingDictionary.ContainsKey(epc))
+            {
+                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
+
+                return -1;
+            }
+            List<int> entries = bindingDictionary[epc];
+            if (entries.Contains(entryNum))
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        private void writeSortOpc(int sortEntry, int sort)
+        {
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            switch (sortEntry)
+            {
+                case 1:
+                    {
+                        dic.Add(Item_SJTUDress.SORT_1, sort);
+                        break;
+                    }
+                case 2:
+                    {
+                        dic.Add(Item_SJTUDress.SORT_2, sort);
+                        break;
+                    }
+                case 3:
+                    {
+                        dic.Add(Item_SJTUDress.SORT_3, sort);
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            opc.WriteAsynchronous(dic);
+        }
+        //进行分拣 操作硬件、更新绑定Dictionary、更新界面
+        private void doSort(string epc, int entryNum)
+        {
+            writeSortOpc(entryNum, DOWN);
+            Thread.Sleep(30);
+            writeSortOpc(entryNum, UP);
+            List<int> entries = bindingDictionary[epc];
+            entries.Remove(entryNum);
+            string sortingEntries = listToString(entries);
+
+            this.BeginInvoke(method: new Action(() =>
+            {
+                ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:mm:ss:fff  ", DateTimeFormatInfo.InvariantInfo) + "#" + epc + "在分拣口" + entryNum + "进行分拣");
+                logListView.Items.Add(item);
+                foreach (ListViewItem ite in bindListView.Items)
+                {
+                    if (ite.SubItems[0].Text == epc)
+                    {
+                        ite.SubItems[1].Text = sortingEntries;
+                        if (sortingEntries.Length == 0)
+                        {
+                            ite.Remove();
+                        }
+                    }
+                }
+
+            }));
+        }
         //清除日志
         private void clearLogBtn_Click(object sender, EventArgs e)
         {
@@ -362,20 +512,88 @@ namespace WindowsFormsApp3
 
         private void DataChange(Dictionary<string, object> itemValues)
         {
-            /*
+           
             foreach (string itemName in itemValues.Keys)
             {
                 switch (itemName)
                 {
-                    case :
+                
+                    case Item_SJTUDress.TRIGGER_1:
                         {
-
+                            Thread sort1Thread = new Thread(new ParameterizedThreadStart(sortThreadFunc));
+                            sort1Thread.Start(1);
+                            break;
+                        }
+                    case Item_SJTUDress.TRIGGER_2:
+                        {
+                            Thread sort2Thread = new Thread(new ParameterizedThreadStart(sortThreadFunc));
+                            sort2Thread.Start(2);
+                            break;
+                        }
+                    case Item_SJTUDress.TRIGGER_3:
+                        {
+                            Thread sort3Thread = new Thread(new ParameterizedThreadStart(sortThreadFunc));
+                            sort3Thread.Start(3);
+                            break;
                         }
                 }
-                */
+            }
+
 
             //
         }
+
+        private void sortThreadFunc(object entryNum)
+        {
+            string epc = "";
+            switch ((int)entryNum)
+            {
+                case 1:
+                    while((epc = sort1Reader.readEPC()).Length==0)
+                    {
+
+                    }
+                    break;
+                case 2:
+                    while ((epc = sort2Reader.readEPC()).Length == 0)
+                    {
+
+                    }
+                    break;
+                case 3:
+                    while ((epc = sort3Reader.readEPC()).Length == 0)
+                    {
+
+                    }
+                    break;
+                default:
+                    break;
+            }
+            switch (checkSort(epc, (int)entryNum))
+            {
+                case 1:
+                    try
+                    {
+                        doSort(epc, (int)entryNum);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e + "in sortThread" + entryNum);
+                    }
+                    
+                    break;
+                case -1:
+                    Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
+                    break;
+                case 0:
+                    Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "不分拣");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
 
         private static string GetAppConfig(string strKey)
         {
@@ -389,5 +607,101 @@ namespace WindowsFormsApp3
             return null;
         }
 
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            if (opc.OPCConect())
+            {
+                opc.SetGroup();
+                // todo 启动机器
+                opc.SetItems(new Item_SJTUDress());
+                opc.ItemDataChange += new OPCAPI.ItemDataChangeEventHandler(DataChange);
+                logListView.Items.Add(new ListViewItem(DateTime.Now + " opc connected"));
+                /*
+                doSort(3, 1);
+                Thread.Sleep(30);
+                doSort(3, 0);*/
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Thread thread1 = new Thread(new ThreadStart(testSort1));
+            Thread thread2 = new Thread(new ThreadStart(testSort2));
+            thread1.Start();
+            thread2.Start();
+        }
+        private void testSort1()
+        {
+            for(int i = 0; i < 5; i++)
+            {
+                writeSortOpc(1, 1);
+                Thread.Sleep(30);
+                writeSortOpc(1, 0);
+                Thread.Sleep(5000);
+            }
+            
+        }
+
+        private void testSort2()
+        {
+            for(int j = 0; j < 6; j++)
+            {
+                writeSortOpc(2, 1);
+                Thread.Sleep(30);
+                writeSortOpc(2, 0);
+                Thread.Sleep(5000);
+            }
+           
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            sort1Reader = new UHFReader(GetAppConfig("ReaderComSort1"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort1")));
+            sort2Reader = new UHFReader(GetAppConfig("ReaderComSort2"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort2")));
+            //sort3Reader = new UHFReader(GetAppConfig("ReaderComSort3"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort3")));
+            Thread thread1 = new Thread(new ParameterizedThreadStart(read));
+            Thread thread2 = new Thread(new ParameterizedThreadStart(read));
+            //Thread thread3 = new Thread(new ParameterizedThreadStart(read));
+            thread1.Start(1);
+            thread2.Start(2);
+            //thread3.Start(3);
+        }
+
+        private void read(object num)
+        {
+            string epc = "";
+            switch ((int)num)
+            {
+                case 1:
+                    while ((epc = sort1Reader.readEPC()).Length == 0)
+                    {
+
+                    }
+                    break;
+                case 2:
+                    while ((epc = sort2Reader.readEPC()).Length == 0)
+                    {
+
+                    }
+                    break;
+                case 3:
+                    while ((epc = sort3Reader.readEPC()).Length == 0)
+                    {
+
+                    }
+                    break;
+                default:break;
+
+            }
+            this.BeginInvoke(method: new Action(() =>
+            {
+                ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:mm:ss:fff  ", DateTimeFormatInfo.InvariantInfo)+ num+ "读到" + "#" + epc );
+                logListView.Items.Add(item);
+            }));
+                
+
+        }
     }
 }
