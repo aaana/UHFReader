@@ -29,13 +29,18 @@ namespace WindowsFormsApp3
             modulerdr.ParamSet("ReadPlan", new SimpleReadPlan(TagProtocol.GEN2, new int[] { 1 }));
             modulerdr.ParamSet("TagopAntenna", 1);
             modulerdr.ParamSet("ReadTxPower", readerPower);
+
         }
 
         public string writeTag(string epc)
         {
+            
             try
             {
-              
+                modulerdr = Reader.Create(readerCom, ModuleTech.Region.NA, 1);
+                modulerdr.ParamSet("ReadPlan", new SimpleReadPlan(TagProtocol.GEN2, new int[] { 1 }));
+                modulerdr.ParamSet("TagopAntenna", 1);
+                modulerdr.ParamSet("ReadTxPower", readerPower);
                 TagData epccode = new TagData(epc);
                 modulerdr.WriteTag(null, epccode);
                 modulerdr.Disconnect();
@@ -53,13 +58,19 @@ namespace WindowsFormsApp3
             }
         }
 
+        public void disConnect()
+        {
+            modulerdr.Disconnect();
+        }
+
         public string readEPC()
         {
+            
             string epc = "";
-            Dictionary<string, int> records = new Dictionary<string, int>();
             try
-            {              
-                TagReadData[] reads = modulerdr.Read(100);
+            {
+                
+                TagReadData[] reads = modulerdr.Read(50);
                 int maxCount = 0;
 
                 if (reads != null && reads.Length > 0)                
@@ -72,10 +83,14 @@ namespace WindowsFormsApp3
                             epc = reads[i].EPCString;
                         }
                     }
-                    
+
+                }
+                else
+                {
+                    Console.WriteLine("没有读到标签");
                 }
 
-                modulerdr.Disconnect();
+                
                 return epc;
             }
             catch (OpFaidedException)

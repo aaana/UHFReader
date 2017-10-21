@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CUHFReader.cs" />
+    <Compile Include="CurrentMillis.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

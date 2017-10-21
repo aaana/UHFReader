@@ -19,6 +19,13 @@ namespace WindowsFormsApp3
         private static int DOWN = 1;
         private static int UP = 0;
 
+        private static int SORT1 = 1;
+        private static int SORT2 = 2;
+        private static int SORT3 = 3;
+
+        long lastTriggerTime1 = 0;
+        long lastTriggerTime2 = 0;
+        //long lastTriggerTime3 = 0;
 
         ConcurrentDictionary<string, List<int>> bindingDictionary = new ConcurrentDictionary<string, List<int>>();
         
@@ -65,7 +72,7 @@ namespace WindowsFormsApp3
                 //int dressLineFre = Convert.ToInt32(dressLineFreTextBox.Text);
                 sort1Reader = new UHFReader(GetAppConfig("ReaderComSort1"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort1")));
                 sort2Reader = new UHFReader(GetAppConfig("ReaderComSort2"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort2")));
-                sort3Reader = new UHFReader(GetAppConfig("ReaderComSort3"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort3")));
+                //sort3Reader = new UHFReader(GetAppConfig("ReaderComSort3"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort3")));
                 /*
                 entryReader.Add(1, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort1Port"))));
                 entryReader.Add(2, CUHFReader.open_port(Convert.ToInt32(GetAppConfig("sort2Port"))));
@@ -79,7 +86,7 @@ namespace WindowsFormsApp3
             }
             catch (Exception exception)
             {
-                MessageBox.Show("请输入正确的频率值", "Warning");
+                //MessageBox.Show("请输入正确的频率值", "Warning");
                 Console.WriteLine(exception);
                 logListView.Items.Add(DateTime.Now + " Readers connect fail " + "\n");
                 return;
@@ -136,7 +143,7 @@ namespace WindowsFormsApp3
                 opc.OPCDisConnect();
                 logListView.Items.Add(DateTime.Now + " opc disconnected" + "\n");
                 // todo关闭读写器
-                //stopReaders();
+                stopReaders();
                 logListView.Items.Add(DateTime.Now + " Readers stop" + "\n");
 
             }
@@ -146,6 +153,9 @@ namespace WindowsFormsApp3
 
         private void stopReaders()
         {
+            sort1Reader.disConnect();
+            sort2Reader.disConnect();
+            //sort3Reader.disConnect();
             /*
             foreach (int port in entryReader.Values)
             {
@@ -411,7 +421,7 @@ namespace WindowsFormsApp3
                 return -2;
             if (!bindingDictionary.ContainsKey(epc))
             {
-                Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
+                //Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
 
                 return -1;
             }
@@ -512,30 +522,49 @@ namespace WindowsFormsApp3
 
         private void DataChange(Dictionary<string, object> itemValues)
         {
-           
+            
             foreach (string itemName in itemValues.Keys)
             {
+                //Console.WriteLine(itemName);
                 switch (itemName)
                 {
-                
+                    
                     case Item_SJTUDress.TRIGGER_1:
                         {
-                            Thread sort1Thread = new Thread(new ParameterizedThreadStart(sortThreadFunc));
-                            sort1Thread.Start(1);
+                            if (Convert.ToInt16( itemValues[itemName] )== 0)
+                                break;
+                            Console.WriteLine("triger1");
+                            long currentTime = CurrentMillis.MicroSeconds;
+                            if(currentTime - lastTriggerTime1 > 2000)
+                            {
+                                Console.WriteLine("thread starts");
+                                Thread sort1Thread = new Thread(new ParameterizedThreadStart(sortThreadFunc));
+                                sort1Thread.Start(SORT1);
+                            }
+                            lastTriggerTime1 = currentTime;
                             break;
                         }
                     case Item_SJTUDress.TRIGGER_2:
                         {
-                            Thread sort2Thread = new Thread(new ParameterizedThreadStart(sortThreadFunc));
-                            sort2Thread.Start(2);
+                            if (Convert.ToInt16(itemValues[itemName]) == 0)
+                                break;
+                            Console.WriteLine("triger2");
+                            long currentTime = CurrentMillis.MicroSeconds;
+                            if(currentTime - lastTriggerTime2 > 2000)
+                            {
+                                Console.WriteLine("thread starts");
+                                Thread sort2Thread = new Thread(new ParameterizedThreadStart(sortThreadFunc));
+                                sort2Thread.Start(SORT2);
+                            }
+                            lastTriggerTime2 = currentTime;
                             break;
                         }
-                    case Item_SJTUDress.TRIGGER_3:
+                    /*case Item_SJTUDress.TRIGGER_3:
                         {
                             Thread sort3Thread = new Thread(new ParameterizedThreadStart(sortThreadFunc));
                             sort3Thread.Start(3);
                             break;
-                        }
+                        }*/
                 }
             }
 
@@ -545,26 +574,19 @@ namespace WindowsFormsApp3
 
         private void sortThreadFunc(object entryNum)
         {
+            Console.WriteLine("thread===============================");
             string epc = "";
+           
             switch ((int)entryNum)
             {
-                case 1:
-                    while((epc = sort1Reader.readEPC()).Length==0)
-                    {
-
-                    }
+                case 1:                
+                    epc = sort1Reader.readEPC();                   
                     break;
-                case 2:
-                    while ((epc = sort2Reader.readEPC()).Length == 0)
-                    {
-
-                    }
+                case 2:                   
+                    epc = sort2Reader.readEPC();
                     break;
                 case 3:
-                    while ((epc = sort3Reader.readEPC()).Length == 0)
-                    {
-
-                    }
+                    epc = sort3Reader.readEPC();
                     break;
                 default:
                     break;
@@ -584,9 +606,21 @@ namespace WindowsFormsApp3
                     break;
                 case -1:
                     Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
+                    this.BeginInvoke(
+                        method: new Action(() =>
+                        {
+                            ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:mm:ss:fff  ", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "未绑定！");
+                            logListView.Items.Add(item);
+                        }));
                     break;
                 case 0:
                     Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "不分拣");
+                    this.BeginInvoke(
+                        method: new Action(() =>
+                        {
+                            ListViewItem item = new ListViewItem(DateTime.Now.ToString("HH:mm:ss:fff  ", DateTimeFormatInfo.InvariantInfo) + "在分拣口" + entryNum + "检测到 #" + epc + "不分拣");
+                            logListView.Items.Add(item);
+                        }));
                     break;
                 default:
                     break;
@@ -686,6 +720,7 @@ namespace WindowsFormsApp3
 
                     }
                     break;
+
                 case 3:
                     while ((epc = sort3Reader.readEPC()).Length == 0)
                     {
