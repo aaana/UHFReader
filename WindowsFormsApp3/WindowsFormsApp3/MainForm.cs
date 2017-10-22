@@ -14,7 +14,7 @@ namespace WindowsFormsApp3
         private OPCAPI opc = new OPCAPI();
 
         //scan读写器
-        UHFReader CardReader = new UHFReader(GetAppConfig("ReaderComScan"),Convert.ToInt32(GetAppConfig("ReadTxPowerScan")));
+        //UHFReader CardReader = new UHFReader(GetAppConfig("ReaderComScan"),Convert.ToInt32(GetAppConfig("ReadTxPowerScan")));
 
         //分拣口读写器
         UHFReader sort1Reader;
@@ -33,7 +33,7 @@ namespace WindowsFormsApp3
         //用于记录上次触发光电的时间
         long lastTriggerTime1 = 0;
         long lastTriggerTime2 = 0;
-        //long lastTriggerTime3 = 0;
+        long lastTriggerTime3 = 0;
 
         //用于记录epc及其绑定的分拣口
         ConcurrentDictionary<string, List<int>> bindingDictionary = new ConcurrentDictionary<string, List<int>>();
@@ -49,7 +49,14 @@ namespace WindowsFormsApp3
         {
             bindListView.FullRowSelect = true;
             logListView.FullRowSelect = false;
-            
+            bindingDictionary.TryAdd("E2004106210E005117306119", new List<int>() {1,2,3 });
+            bindingDictionary.TryAdd("E2004106210E005118205882", new List<int>() { 1, 2, 3 });
+            bindingDictionary.TryAdd("E2004106210E00511710625F", new List<int>() { 1, 2, 3 });
+            bindingDictionary.TryAdd("E2004106210E005118505129", new List<int>() { 1, 2, 3 });
+            bindingDictionary.TryAdd("E2004106210E00511750611B", new List<int>() { 1, 2, 3 });
+            bindingDictionary.TryAdd("E2004106210E0051168069CC", new List<int>() { 1, 2, 3 });
+
+
         }
 
 
@@ -61,6 +68,8 @@ namespace WindowsFormsApp3
             {
                 //int dressLineFre = Convert.ToInt32(dressLineFreTextBox.Text);
                 sort1Reader = new UHFReader(GetAppConfig("ReaderComSort1"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort1")));
+                sort2Reader = new UHFReader(GetAppConfig("ReaderComSort2"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort2")));
+                sort3Reader = new UHFReader(GetAppConfig("ReaderComSort3"), Convert.ToInt32(GetAppConfig("ReadTxPowerSort3")));
                 logListView.Items.Add(new ListViewItem(DateTime.Now + " Readers Running..."));
 
 
@@ -124,6 +133,7 @@ namespace WindowsFormsApp3
         {
             sort1Reader.disConnect();
             sort2Reader.disConnect();
+            sort3Reader.disConnect();
 
         }
 
@@ -243,8 +253,8 @@ namespace WindowsFormsApp3
         {
             //打开
             Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo));
-    
-                string epc = CardReader.readEPC();
+
+            string epc = "";// = CardReader.readEPC();
 
                 switch (epc)
                 {
@@ -331,6 +341,7 @@ namespace WindowsFormsApp3
             List<int> entries = bindingDictionary[epc];
             entries.Remove(entryNum);
             string sortingEntries = listToString(entries);
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff  ", DateTimeFormatInfo.InvariantInfo) + "#" + epc + "在分拣口" + entryNum + "进行分拣");
 
             this.BeginInvoke(method: new Action(() =>
             {
@@ -421,12 +432,22 @@ namespace WindowsFormsApp3
                             lastTriggerTime2 = currentTime;
                             break;
                         }
-                    /*case Item_SJTUDress.TRIGGER_3:
+                    case Item_SJTUDress.TRIGGER_3:
                         {
-                            Thread sort3Thread = new Thread(new ParameterizedThreadStart(sortThreadFunc));
-                            sort3Thread.Start(3);
+                            if (Convert.ToInt16(itemValues[itemName]) == 0)
+                                break;
+                            Console.WriteLine("triger3");
+                            long currentTime = CurrentMillis.MicroSeconds;
+                            if (currentTime - lastTriggerTime3 > 2000)
+                            {
+                                Console.WriteLine("thread starts");
+                                Thread sort3Thread = new Thread(new ParameterizedThreadStart(sortThreadFunc));
+                                sort3Thread.Start(SORT3);
+                            }
+                            lastTriggerTime3 = currentTime;
                             break;
-                        }*/
+                            
+                        }
                 }
             }
 
