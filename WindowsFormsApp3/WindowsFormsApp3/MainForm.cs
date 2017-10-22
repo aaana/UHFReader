@@ -159,9 +159,13 @@ namespace WindowsFormsApp3
                 return;
             }
             new BindingForm(this, epc).ShowDialog();
-            ListViewItem item = new ListViewItem(epc);
-            item.SubItems.Add(Utils.listToString(bindingDictionary[epc]));
-            bindListView.Items.Add(item);
+            if (bindingDictionary.ContainsKey(epc))
+            {
+                ListViewItem item = new ListViewItem(epc);
+                item.SubItems.Add(Utils.listToString(bindingDictionary[epc]));
+                bindListView.Items.Add(item);
+            }
+            
             /*      
        List<int> entries = new List<int>();
        string sortingEntries = "";

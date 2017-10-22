@@ -62,8 +62,13 @@ namespace WindowsFormsApp3
 
         private void conformBtn_Click(object sender, EventArgs e)
         {
-                _mainForm.addBinding(_epc, selectedSortEntries);
-                Dispose();
+            if(selectedSortEntries.Count == 0)
+            {
+                MessageBox.Show("请选择分拣口","Warning");
+                return;
+            }
+            _mainForm.addBinding(_epc, selectedSortEntries);
+            Dispose();
            
         }
 

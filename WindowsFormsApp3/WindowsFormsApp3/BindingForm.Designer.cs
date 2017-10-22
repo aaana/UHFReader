@@ -106,10 +106,12 @@
             // 
             this.epcLabel.AutoSize = true;
             this.epcLabel.BackColor = System.Drawing.Color.Transparent;
+            this.epcLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.epcLabel.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.epcLabel.Location = new System.Drawing.Point(91, 21);
+            this.epcLabel.Location = new System.Drawing.Point(90, 18);
             this.epcLabel.Name = "epcLabel";
-            this.epcLabel.Size = new System.Drawing.Size(49, 14);
+            this.epcLabel.Padding = new System.Windows.Forms.Padding(2);
+            this.epcLabel.Size = new System.Drawing.Size(55, 20);
             this.epcLabel.TabIndex = 6;
             this.epcLabel.Text = "label2";
             // 
