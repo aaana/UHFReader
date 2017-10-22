@@ -44,6 +44,11 @@ namespace WindowsFormsApp3
             InitializeComponent();
         }
 
+        public void addBinding(string epc,List<int> sortEntriesList)
+        {
+            bindingDictionary[epc] = sortEntriesList;
+        }
+
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -153,55 +158,48 @@ namespace WindowsFormsApp3
                 MessageBox.Show("该服装已绑定", "Warning");
                 return;
             }
-            //
-            List<int> entries = new List<int>();
-            string sortingEntries = "";
-            for (int i = 0; i < bindCheckedListBox.Items.Count; i++)
-            {
-                if (bindCheckedListBox.GetItemChecked(i))
-                {
-                    entries.Add(i + 1);
-                    sortingEntries = sortingEntries + (i + 1) + ",";
-                }
+            new BindingForm(this, epc).ShowDialog();
+            ListViewItem item = new ListViewItem(epc);
+            item.SubItems.Add(Utils.listToString(bindingDictionary[epc]));
+            bindListView.Items.Add(item);
+            /*      
+       List<int> entries = new List<int>();
+       string sortingEntries = "";
 
-            }
-            if (sortingEntries.Length > 0)
-            {
-                sortingEntries = sortingEntries.Substring(0, sortingEntries.Length - 1);
-            }
-            else
-            {
-                Console.WriteLine("请选择分拣口");
-                MessageBox.Show("请选择分拣口", "Warning");
-                return;
-            }
-            if (MessageBox.Show("确认绑定#" + epc + "\n到" + sortingEntries + "分拣口吗？", "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
-            {
-                bindingDictionary[epc] = entries;
-                ListViewItem item = new ListViewItem(epc);
-                item.SubItems.Add(sortingEntries);
-                bindListView.Items.Add(item);
-            }
-            //清空checkbox
-            for (int j = 0; j < bindCheckedListBox.Items.Count; j++)
-                bindCheckedListBox.SetItemChecked(j, false);
-            selectAllCheckBox.Checked = false;
+       for (int i = 0; i < bindCheckedListBox.Items.Count; i++)
+       {
+           if (bindCheckedListBox.GetItemChecked(i))
+           {
+               entries.Add(i + 1);
+               sortingEntries = sortingEntries + (i + 1) + ",";
+           }
+
+       }
+       if (sortingEntries.Length > 0)
+       {
+           sortingEntries = sortingEntries.Substring(0, sortingEntries.Length - 1);
+       }
+       else
+       {
+           Console.WriteLine("请选择分拣口");
+           MessageBox.Show("请选择分拣口", "Warning");
+           return;
+       }
+       if (MessageBox.Show("确认绑定#" + epc + "\n到" + sortingEntries + "分拣口吗？", "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+       {
+           bindingDictionary[epc] = entries;
+           ListViewItem item = new ListViewItem(epc);
+           item.SubItems.Add(sortingEntries);
+           bindListView.Items.Add(item);
+       }
+       /*
+       //清空checkbox
+       for (int j = 0; j < bindCheckedListBox.Items.Count; j++)
+           bindCheckedListBox.SetItemChecked(j, false);
+       selectAllCheckBox.Checked = false;*/
+
         }
 
-        //全选
-        private void selectAllCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (selectAllCheckBox.Checked)
-            {
-                for (int j = 0; j < bindCheckedListBox.Items.Count; j++)
-                    bindCheckedListBox.SetItemChecked(j, true);
-            }
-            else
-            {
-                for (int j = 0; j < bindCheckedListBox.Items.Count; j++)
-                    bindCheckedListBox.SetItemChecked(j, false);
-            }
-        }
 
         //清除绑定
         private void clearBindBtn_Click(object sender, EventArgs e)
@@ -281,6 +279,7 @@ namespace WindowsFormsApp3
         /*检查epc在entryNum是否需要分拣
          * -2=>未读到
          * -1=>未绑定 
+         * -3 
          * 1=>分拣 
          * 0=>不分拣
         */
@@ -294,7 +293,7 @@ namespace WindowsFormsApp3
                 return -1;
             }
             List<int> entries = bindingDictionary[epc];
-            if (entries.Contains(entryNum))
+            if (bindingDictionary[epc][0] ==entryNum)
             {
                 return 1;
             }
@@ -340,7 +339,7 @@ namespace WindowsFormsApp3
             writeSortOpc(entryNum, UP);
             List<int> entries = bindingDictionary[epc];
             entries.Remove(entryNum);
-            string sortingEntries = listToString(entries);
+            string sortingEntries = Utils.listToString(entries);
             Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff  ", DateTimeFormatInfo.InvariantInfo) + "#" + epc + "在分拣口" + entryNum + "进行分拣");
 
             this.BeginInvoke(method: new Action(() =>
@@ -368,20 +367,6 @@ namespace WindowsFormsApp3
             logListView.Items.Clear();
         }
 
-        //helper
-        private string listToString(List<int> entries)
-        {
-            string sortingEntries = "";
-            foreach (int i in entries)
-            {
-                sortingEntries += i + ",";
-            }
-            if (sortingEntries.Length > 0)
-            {
-                sortingEntries = sortingEntries.Substring(0, sortingEntries.Length - 1);
-            }
-            return sortingEntries;
-        }
 
         private void clearAllBindingBtn_Click(object sender, EventArgs e)
         {

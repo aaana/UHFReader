@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.bindCheckedListBox = new System.Windows.Forms.CheckedListBox();
             this.bindBtn = new System.Windows.Forms.Button();
             this.startDressLineBtn = new System.Windows.Forms.Button();
             this.stopDressLineBtn = new System.Windows.Forms.Button();
@@ -42,7 +41,6 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clearLogBtn = new System.Windows.Forms.Button();
             this.tagTextBox = new System.Windows.Forms.TextBox();
-            this.selectAllCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.clearAllBindingBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -59,20 +57,6 @@
             this.label1.Size = new System.Drawing.Size(37, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "TAG";
-            // 
-            // bindCheckedListBox
-            // 
-            this.bindCheckedListBox.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.bindCheckedListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.bindCheckedListBox.FormattingEnabled = true;
-            this.bindCheckedListBox.Items.AddRange(new object[] {
-            "自动线1号位",
-            "自动线2号位",
-            "自动线3号位"});
-            this.bindCheckedListBox.Location = new System.Drawing.Point(68, 105);
-            this.bindCheckedListBox.Name = "bindCheckedListBox";
-            this.bindCheckedListBox.Size = new System.Drawing.Size(177, 84);
-            this.bindCheckedListBox.TabIndex = 2;
             // 
             // bindBtn
             // 
@@ -185,27 +169,14 @@
             this.tagTextBox.Size = new System.Drawing.Size(262, 26);
             this.tagTextBox.TabIndex = 16;
             // 
-            // selectAllCheckBox
-            // 
-            this.selectAllCheckBox.AutoSize = true;
-            this.selectAllCheckBox.Location = new System.Drawing.Point(68, 81);
-            this.selectAllCheckBox.Name = "selectAllCheckBox";
-            this.selectAllCheckBox.Size = new System.Drawing.Size(56, 24);
-            this.selectAllCheckBox.TabIndex = 17;
-            this.selectAllCheckBox.Text = "全选";
-            this.selectAllCheckBox.UseVisualStyleBackColor = true;
-            this.selectAllCheckBox.CheckedChanged += new System.EventHandler(this.selectAllCheckBox_CheckedChanged);
-            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.clearAllBindingBtn);
-            this.groupBox1.Controls.Add(this.selectAllCheckBox);
             this.groupBox1.Controls.Add(this.tagTextBox);
             this.groupBox1.Controls.Add(this.clearBindBtn);
             this.groupBox1.Controls.Add(this.bindListView);
             this.groupBox1.Controls.Add(this.readBtn);
             this.groupBox1.Controls.Add(this.bindBtn);
-            this.groupBox1.Controls.Add(this.bindCheckedListBox);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(27, 58);
             this.groupBox1.Name = "groupBox1";
@@ -260,7 +231,6 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckedListBox bindCheckedListBox;
         private System.Windows.Forms.Button bindBtn;
         private System.Windows.Forms.Button startDressLineBtn;
         private System.Windows.Forms.Button stopDressLineBtn;
@@ -270,7 +240,6 @@
         private System.Windows.Forms.ListView logListView;
         private System.Windows.Forms.Button clearLogBtn;
         private System.Windows.Forms.TextBox tagTextBox;
-        private System.Windows.Forms.CheckBox selectAllCheckBox;
         private System.Windows.Forms.ColumnHeader epc;
         private System.Windows.Forms.ColumnHeader entries;
         private System.Windows.Forms.ColumnHeader columnHeader1;
