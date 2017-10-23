@@ -84,7 +84,7 @@
             // 
             this.stopDressLineBtn.Enabled = false;
             this.stopDressLineBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.stopDressLineBtn.Location = new System.Drawing.Point(327, 37);
+            this.stopDressLineBtn.Location = new System.Drawing.Point(348, 37);
             this.stopDressLineBtn.Name = "stopDressLineBtn";
             this.stopDressLineBtn.Size = new System.Drawing.Size(95, 29);
             this.stopDressLineBtn.TabIndex = 5;
@@ -203,7 +203,7 @@
             this.groupBox2.Controls.Add(this.startDressLineBtn);
             this.groupBox2.Location = new System.Drawing.Point(491, 58);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(449, 587);
+            this.groupBox2.Size = new System.Drawing.Size(474, 587);
             this.groupBox2.TabIndex = 19;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "服装线操作";
@@ -213,12 +213,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.ClientSize = new System.Drawing.Size(969, 717);
+            this.ClientSize = new System.Drawing.Size(1350, 730);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBox1.ResumeLayout(false);

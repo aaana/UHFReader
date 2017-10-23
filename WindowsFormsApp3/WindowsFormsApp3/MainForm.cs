@@ -54,12 +54,12 @@ namespace WindowsFormsApp3
         {
             bindListView.FullRowSelect = true;
             logListView.FullRowSelect = false;
-            bindingDictionary.TryAdd("E2004106210E005117306119", new List<int>() {1,2,3 });
-            bindingDictionary.TryAdd("E2004106210E005118205882", new List<int>() { 1, 2, 3 });
-            bindingDictionary.TryAdd("E2004106210E00511710625F", new List<int>() { 1, 2, 3 });
-            bindingDictionary.TryAdd("E2004106210E005118505129", new List<int>() { 1, 2, 3 });
-            bindingDictionary.TryAdd("E2004106210E00511750611B", new List<int>() { 1, 2, 3 });
-            bindingDictionary.TryAdd("E2004106210E0051168069CC", new List<int>() { 1, 2, 3 });
+            //bindingDictionary.TryAdd("E2004106210E005117306119", new List<int>() {1,2,3 });
+            //bindingDictionary.TryAdd("E2004106210E005118205882", new List<int>() { 1, 2, 3 });
+            //bindingDictionary.TryAdd("E2004106210E00511710625F", new List<int>() { 1, 2, 3 });
+            //bindingDictionary.TryAdd("E2004106210E005118505129", new List<int>() { 1, 2, 3 });
+            //bindingDictionary.TryAdd("E2004106210E00511750611B", new List<int>() { 1, 2, 3 });
+            //bindingDictionary.TryAdd("E2004106210E0051168069CC", new List<int>() { 1, 2, 3 });
 
 
         }
@@ -283,7 +283,7 @@ namespace WindowsFormsApp3
         /*检查epc在entryNum是否需要分拣
          * -2=>未读到
          * -1=>未绑定 
-         * -3 
+         * -3 =>分拣结束
          * 1=>分拣 
          * 0=>不分拣
         */
@@ -297,6 +297,11 @@ namespace WindowsFormsApp3
                 return -1;
             }
             List<int> entries = bindingDictionary[epc];
+            if (bindingDictionary[epc].Count <= 0)
+            {
+                Console.WriteLine("分拣结束");
+                return -3;
+            }
             if (bindingDictionary[epc][0] ==entryNum)
             {
                 return 1;
