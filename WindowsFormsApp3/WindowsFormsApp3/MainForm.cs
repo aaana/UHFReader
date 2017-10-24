@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -158,6 +159,12 @@ namespace WindowsFormsApp3
                 MessageBox.Show("该服装已绑定", "Warning");
                 return;
             }
+            if (!checkEPC(epc))
+            {
+                Console.WriteLine("EPC格式不正确");
+                MessageBox.Show("EPC格式不正确","Warning");
+                return;
+            }
             new BindingForm(this, epc).ShowDialog();
             if (bindingDictionary.ContainsKey(epc))
             {
@@ -202,6 +209,13 @@ namespace WindowsFormsApp3
            bindCheckedListBox.SetItemChecked(j, false);
        selectAllCheckBox.Checked = false;*/
 
+        }
+
+        private bool checkEPC(string epc)
+        {
+            string pattern = @"[0-9A-F]{24}";
+            Regex regex = new Regex(pattern);
+            return regex.IsMatch(epc);
         }
 
 

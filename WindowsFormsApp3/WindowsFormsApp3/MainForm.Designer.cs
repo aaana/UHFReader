@@ -61,7 +61,7 @@
             // bindBtn
             // 
             this.bindBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bindBtn.Location = new System.Drawing.Point(336, 105);
+            this.bindBtn.Location = new System.Drawing.Point(500, 46);
             this.bindBtn.Name = "bindBtn";
             this.bindBtn.Size = new System.Drawing.Size(75, 29);
             this.bindBtn.TabIndex = 3;
@@ -72,7 +72,7 @@
             // startDressLineBtn
             // 
             this.startDressLineBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.startDressLineBtn.Location = new System.Drawing.Point(24, 37);
+            this.startDressLineBtn.Location = new System.Drawing.Point(33, 48);
             this.startDressLineBtn.Name = "startDressLineBtn";
             this.startDressLineBtn.Size = new System.Drawing.Size(102, 29);
             this.startDressLineBtn.TabIndex = 4;
@@ -84,7 +84,7 @@
             // 
             this.stopDressLineBtn.Enabled = false;
             this.stopDressLineBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.stopDressLineBtn.Location = new System.Drawing.Point(348, 37);
+            this.stopDressLineBtn.Location = new System.Drawing.Point(486, 48);
             this.stopDressLineBtn.Name = "stopDressLineBtn";
             this.stopDressLineBtn.Size = new System.Drawing.Size(95, 29);
             this.stopDressLineBtn.TabIndex = 5;
@@ -95,7 +95,7 @@
             // readBtn
             // 
             this.readBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.readBtn.Location = new System.Drawing.Point(336, 48);
+            this.readBtn.Location = new System.Drawing.Point(395, 46);
             this.readBtn.Name = "readBtn";
             this.readBtn.Size = new System.Drawing.Size(75, 29);
             this.readBtn.TabIndex = 11;
@@ -108,9 +108,9 @@
             this.bindListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.epc,
             this.entries});
-            this.bindListView.Location = new System.Drawing.Point(28, 184);
+            this.bindListView.Location = new System.Drawing.Point(28, 105);
             this.bindListView.Name = "bindListView";
-            this.bindListView.Size = new System.Drawing.Size(383, 346);
+            this.bindListView.Size = new System.Drawing.Size(547, 425);
             this.bindListView.TabIndex = 12;
             this.bindListView.UseCompatibleStateImageBehavior = false;
             this.bindListView.View = System.Windows.Forms.View.Details;
@@ -118,16 +118,16 @@
             // epc
             // 
             this.epc.Text = "EPC";
-            this.epc.Width = 191;
+            this.epc.Width = 274;
             // 
             // entries
             // 
             this.entries.Text = "分拣口";
-            this.entries.Width = 191;
+            this.entries.Width = 274;
             // 
             // clearBindBtn
             // 
-            this.clearBindBtn.Location = new System.Drawing.Point(310, 536);
+            this.clearBindBtn.Location = new System.Drawing.Point(474, 537);
             this.clearBindBtn.Name = "clearBindBtn";
             this.clearBindBtn.Size = new System.Drawing.Size(101, 32);
             this.clearBindBtn.TabIndex = 13;
@@ -139,10 +139,10 @@
             // 
             this.logListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-            this.logListView.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.logListView.Location = new System.Drawing.Point(24, 105);
+            this.logListView.Font = new System.Drawing.Font("微软雅黑", 10.5F);
+            this.logListView.Location = new System.Drawing.Point(33, 105);
             this.logListView.Name = "logListView";
-            this.logListView.Size = new System.Drawing.Size(419, 425);
+            this.logListView.Size = new System.Drawing.Size(548, 426);
             this.logListView.TabIndex = 14;
             this.logListView.UseCompatibleStateImageBehavior = false;
             this.logListView.View = System.Windows.Forms.View.Details;
@@ -150,11 +150,11 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "日志";
-            this.columnHeader1.Width = 398;
+            this.columnHeader1.Width = 549;
             // 
             // clearLogBtn
             // 
-            this.clearLogBtn.Location = new System.Drawing.Point(335, 536);
+            this.clearLogBtn.Location = new System.Drawing.Point(494, 537);
             this.clearLogBtn.Name = "clearLogBtn";
             this.clearLogBtn.Size = new System.Drawing.Size(87, 32);
             this.clearLogBtn.TabIndex = 15;
@@ -180,16 +180,16 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(27, 58);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(444, 587);
+            this.groupBox1.Size = new System.Drawing.Size(607, 587);
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "标签读取与绑定";
             // 
             // clearAllBindingBtn
             // 
-            this.clearAllBindingBtn.Location = new System.Drawing.Point(201, 537);
+            this.clearAllBindingBtn.Location = new System.Drawing.Point(357, 536);
             this.clearAllBindingBtn.Name = "clearAllBindingBtn";
-            this.clearAllBindingBtn.Size = new System.Drawing.Size(86, 30);
+            this.clearAllBindingBtn.Size = new System.Drawing.Size(94, 33);
             this.clearAllBindingBtn.TabIndex = 18;
             this.clearAllBindingBtn.Text = "清空绑定";
             this.clearAllBindingBtn.UseVisualStyleBackColor = true;
@@ -201,9 +201,9 @@
             this.groupBox2.Controls.Add(this.logListView);
             this.groupBox2.Controls.Add(this.stopDressLineBtn);
             this.groupBox2.Controls.Add(this.startDressLineBtn);
-            this.groupBox2.Location = new System.Drawing.Point(491, 58);
+            this.groupBox2.Location = new System.Drawing.Point(698, 58);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(474, 587);
+            this.groupBox2.Size = new System.Drawing.Size(614, 587);
             this.groupBox2.TabIndex = 19;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "服装线操作";

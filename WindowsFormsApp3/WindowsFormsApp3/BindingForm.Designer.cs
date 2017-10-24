@@ -129,6 +129,7 @@
             this.Controls.Add(this.rightListBox);
             this.Controls.Add(this.leftListBox);
             this.Name = "BindingForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "BindingForm";
             this.Load += new System.EventHandler(this.BindingForm_Load);
             this.ResumeLayout(false);
