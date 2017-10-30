@@ -44,6 +44,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.clearAllBindingBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -178,7 +179,7 @@
             this.groupBox1.Controls.Add(this.readBtn);
             this.groupBox1.Controls.Add(this.bindBtn);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(27, 58);
+            this.groupBox1.Location = new System.Drawing.Point(27, 111);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(607, 587);
             this.groupBox1.TabIndex = 18;
@@ -201,12 +202,22 @@
             this.groupBox2.Controls.Add(this.logListView);
             this.groupBox2.Controls.Add(this.stopDressLineBtn);
             this.groupBox2.Controls.Add(this.startDressLineBtn);
-            this.groupBox2.Location = new System.Drawing.Point(698, 58);
+            this.groupBox2.Location = new System.Drawing.Point(698, 111);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(614, 587);
             this.groupBox2.TabIndex = 19;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "服装线操作";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("微软雅黑", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label2.Location = new System.Drawing.Point(590, 37);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(162, 38);
+            this.label2.TabIndex = 20;
+            this.label2.Text = "服装线系统";
             // 
             // MainForm
             // 
@@ -214,18 +225,20 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1350, 730);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "MainForm";
+            this.Text = "fuzhuan";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -247,5 +260,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button clearAllBindingBtn;
+        private System.Windows.Forms.Label label2;
     }
 }
