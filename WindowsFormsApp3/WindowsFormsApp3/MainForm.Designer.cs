@@ -28,6 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Readers running...");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("opc connected");
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("#00000000000000000000000A在分拣口2进行分拣");
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("#00000000000000000000000A在分拣口1进行分拣");
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("#00000000000000000000000A在分拣口3进行分拣");
             this.label1 = new System.Windows.Forms.Label();
             this.bindBtn = new System.Windows.Forms.Button();
             this.startDressLineBtn = new System.Windows.Forms.Button();
@@ -128,11 +133,11 @@
             // 
             // clearBindBtn
             // 
-            this.clearBindBtn.Location = new System.Drawing.Point(474, 537);
+            this.clearBindBtn.Location = new System.Drawing.Point(418, 537);
             this.clearBindBtn.Name = "clearBindBtn";
-            this.clearBindBtn.Size = new System.Drawing.Size(101, 32);
+            this.clearBindBtn.Size = new System.Drawing.Size(157, 32);
             this.clearBindBtn.TabIndex = 13;
-            this.clearBindBtn.Text = "清除绑定";
+            this.clearBindBtn.Text = "解除指定服装绑定";
             this.clearBindBtn.UseVisualStyleBackColor = true;
             this.clearBindBtn.Click += new System.EventHandler(this.clearBindBtn_Click);
             // 
@@ -141,6 +146,12 @@
             this.logListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
             this.logListView.Font = new System.Drawing.Font("微软雅黑", 10.5F);
+            this.logListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4,
+            listViewItem5});
             this.logListView.Location = new System.Drawing.Point(33, 105);
             this.logListView.Name = "logListView";
             this.logListView.Size = new System.Drawing.Size(548, 426);
@@ -166,6 +177,7 @@
             // tagTextBox
             // 
             this.tagTextBox.Location = new System.Drawing.Point(68, 49);
+            this.tagTextBox.MaxLength = 24;
             this.tagTextBox.Name = "tagTextBox";
             this.tagTextBox.Size = new System.Drawing.Size(262, 26);
             this.tagTextBox.TabIndex = 16;
@@ -188,11 +200,11 @@
             // 
             // clearAllBindingBtn
             // 
-            this.clearAllBindingBtn.Location = new System.Drawing.Point(357, 536);
+            this.clearAllBindingBtn.Location = new System.Drawing.Point(28, 537);
             this.clearAllBindingBtn.Name = "clearAllBindingBtn";
-            this.clearAllBindingBtn.Size = new System.Drawing.Size(94, 33);
+            this.clearAllBindingBtn.Size = new System.Drawing.Size(162, 33);
             this.clearAllBindingBtn.TabIndex = 18;
-            this.clearAllBindingBtn.Text = "清空绑定";
+            this.clearAllBindingBtn.Text = "解除所有服装绑定";
             this.clearAllBindingBtn.UseVisualStyleBackColor = true;
             this.clearAllBindingBtn.Click += new System.EventHandler(this.clearAllBindingBtn_Click);
             // 
@@ -213,11 +225,11 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("微软雅黑", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label2.Location = new System.Drawing.Point(590, 37);
+            this.label2.Location = new System.Drawing.Point(387, 42);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(162, 38);
+            this.label2.Size = new System.Drawing.Size(546, 38);
             this.label2.TabIndex = 20;
-            this.label2.Text = "服装线系统";
+            this.label2.Text = "基于RFID的大规模定制服装制造实训环境";
             // 
             // MainForm
             // 
@@ -232,7 +244,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "fuzhuan";
+            this.Text = "基于RFID的大规模定制服装制造实训环境";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

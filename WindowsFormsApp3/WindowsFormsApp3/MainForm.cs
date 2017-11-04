@@ -134,7 +134,9 @@ namespace WindowsFormsApp3
 
 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         private void stopReaders()
         {
             sort1Reader.disConnect();
@@ -210,7 +212,11 @@ namespace WindowsFormsApp3
        selectAllCheckBox.Checked = false;*/
 
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="epc"></param>
+        /// <returns></returns>
         private bool checkEPC(string epc)
         {
             string pattern = @"[0-9A-F]{24}";
@@ -270,7 +276,7 @@ namespace WindowsFormsApp3
             //打开
             Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo));
 
-            string epc = "";// = CardReader.readEPC();
+            string epc = "00000000000000000000000A";// = CardReader.readEPC();
 
                 switch (epc)
                 {
@@ -294,13 +300,17 @@ namespace WindowsFormsApp3
             Console.WriteLine(DateTime.Now.ToString("HH:mm:ss:fff", DateTimeFormatInfo.InvariantInfo));
         }
 
-        /*检查epc在entryNum是否需要分拣
-         * -2=>未读到
-         * -1=>未绑定 
-         * -3 =>分拣结束
-         * 1=>分拣 
-         * 0=>不分拣
-        */
+
+        /// <summary>
+        /// 检查epc在entryNum是否需要分拣
+        /// </summary>
+        /// <param name="epc"></param>
+        /// <param name="entryNum"></param>
+        /// <returns>-2=>未读到 
+        /// -1=>未绑定
+        /// -3 =>分拣结束
+        /// 1=>分拣
+        /// 0=>不分拣</returns>
         private int checkSort(string epc, int entryNum)
         {
             if (epc.Length == 0)
